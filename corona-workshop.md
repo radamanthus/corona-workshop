@@ -8,7 +8,7 @@ Look at the following built-in Android applications:
 - Messaging
 - Clock
 - Calendar
- 
+
 Based on what you know from programming desktop applications, how will you build these three applications?
 
 What are the common characteristics of these three mobile applications?
@@ -53,11 +53,11 @@ Edit `main.lua` and add this line to the bottom:
 print "Hello, World!"
 ```
 
-Save the file. 
+Save the file.
 
 The Corona Simulator will detect the save operation and will ask you if you want to relaunch the Simulator (reload the project) every time there are changes. Check `Remember my preference` and click the `Relaunch Simulator` button.
 
-Open the `Corona Simulator Output` window. You should see a timestamp and the text `Hello, World!` 
+Open the `Corona Simulator Output` window. You should see a timestamp and the text `Hello, World!`
 
 ### Step 3. Draw the spaceship
 
@@ -156,16 +156,100 @@ Easier way, if you have the Android SDK installed on your computer:
 
 `adb install -r your-app.apk`
 
-Corona guide: 
+Corona guide:
 
 [Device installation](https://docs.coronalabs.com/daily/guide/distribution/androidBuild/index.html#installapp)
 
-### Step 9. Make the spaceship go right when the right button is tapped
+### Step 7. Make the spaceship move when the left or right button is tapped
 
-### Step 10. Make the spaceship fire bullets when the fire button is tapped
+We already added button event handlers in the previous step:
+
+```
+local function onLeftButtonTap ( event )
+  print( "Left button was tapped!" )
+  return true
+end
+```
+
+We just need to modify them to actually move the spaceship. To do this we'll use [Corona's built-in physics engine] (https://docs.coronalabs.com/daily/api/library/physics/index.html).
+
+At the start of the program, initialize the physics engine and set a zero gravity:
+
+```
+local physics = require "physics"
+physics.start()
+physics.setGravity( 0, 0 )
+```
+
+We need to add the spaceship to the physics engine. We'll do that after drawing the spaceship on the screen. Modify our spaceship code block to:
+
+```
+-- Draw the spacehip
+startX = display.viewableContentWidth / 2
+startY = display.viewableContentHeight - 100
+spaceship = display.newImage( "spaceship.png", startX, startY )
+physics.addBody( spaceship )
+```
+
+Change the `onLeftButtonTap` function to:
+
+```
+local function onLeftButtonTap ( event )
+  spaceship:applyForce( -1, 0, spaceship.x, spaceship.y )
+  return true
+end
+```
+
+Likeweise change the `onRightButtonTap` function:
+
+```
+local function onLeftButtonTap ( event )
+  spaceship:applyForce( 1, 0, spaceship.x, spaceship.y )
+  return true
+end
+```
+
+Run the program in the simulator. If you tap the left button you'll see the spaceship move left until it moves off the edge. Tap the right button to make it stop, and tap it again to make it move back to the right.
+
+#### Exercise
+
+We do not yet do anything to ensure the spaceship stays on the screen. What's a simple way to do this Using the physics engine?
+
+### Step 8. Make the spaceship fire bullets when the fire button is tapped
+
+Time to shoot some bullets!
+
+To keep things simple, we'll have only one bullet at a time. To enforce this, we'll only fire a bullet if there is no active bullet on the screen.
+
+#### Exercise
+
+Declare a `bullet_active` variable and initialize it to `0` (false)
+
+Draw a bullet but set the x and y coordinates such that the bullet is off the screen
+
+Add the bullet to the physics world
+
+When the player taps the fire button, if there is no active bullet, do the following:
+
+- move the bullet to the upper edge of the spaceship by changing it's x and y properties
+- apply a force to the bullet to make it go up
 
 ### Step 11. End the game when a bullet hits the target
 
-### Step 12. Build the application into a device
+#### Exercise
+
+Get your friend's Facebook profile picture and save it as a PNG file named "target.png"
+
+Add target.png to the project
+
+Draw target.png at the upper edge of the screen. Add it to the physics world so that we can know when a bullet hits it.
+
+When a bullet hits the target image, make it bigger (scale up) and then smaller (scale down) three times
+
+You'll find these guides useful:
+
+[Corona collision detection](https://docs.coronalabs.com/daily/guide/physics/collisionDetection/index.html)
+
+[Corona transitions](https://docs.coronalabs.com/api/library/transition/to.html)
 
 ### Wrap-up
